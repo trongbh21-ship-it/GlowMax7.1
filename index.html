@@ -452,8 +452,8 @@
           <span id="settings-puter-user" class="font-mono font-bold text-cyan-300">Khách</span>
         </div>
         <div class="flex items-center justify-between">
-          <span class="text-zinc-400">Mô hình AI Vision:</span>
-          <span class="font-mono font-bold text-[#F3D27A]">gemini-3.8-flash (Puter.js)</span>
+          <span class="text-zinc-400">Công nghệ phân tích:</span>
+          <span class="font-mono font-bold text-[#F3D27A]">GlowMax Vision 3D</span>
         </div>
         <div class="flex items-center justify-between">
           <span class="text-zinc-400">Lượt chấm hôm nay:</span>
@@ -1048,7 +1048,7 @@
 
         <div class="space-y-1.5">
           <h2 class="text-xl sm:text-2xl font-black text-white uppercase tracking-tight">CHỌN KIỂU QUÉT</h2>
-          <p class="text-xs text-zinc-400">Hỗ trợ cả 2 góc ảnh (Chính diện &amp; Nghiêng 90°) với <span class="font-mono text-[#F3D27A]">gemini-3.8-flash</span></p>
+          <p class="text-xs text-zinc-400">Hỗ trợ cả 2 góc ảnh (Chính diện &amp; Nghiêng 90°) chuẩn nhân trắc học 3D</p>
         </div>
 
         <div class="max-w-sm mx-auto grid grid-cols-2 gap-2 pt-1">
@@ -1164,7 +1164,7 @@
       <div id="analysis-loading-box" class="hidden glow-card rounded-3xl p-6 text-center space-y-3 border border-[#E5B954]/40">
         <div class="w-12 h-12 rounded-full border-2 border-[#E5B954] border-t-transparent animate-spin mx-auto"></div>
         <h3 class="text-sm font-extrabold text-white" id="loading-status-title">Đang trích xuất 468 điểm mốc MediaPipe 3D...</h3>
-        <p class="text-xs text-zinc-400 font-mono" id="loading-status-sub">Mô hình: gemini-3.8-flash • Máy Đo Nhân Trắc Học Vô Cảm</p>
+        <p class="text-xs text-zinc-400 font-mono" id="loading-status-sub">Hệ thống đo nhân trắc học 3D • Máy Đo Vô Cảm</p>
       </div>
     </section>
 
@@ -3199,7 +3199,7 @@ CHỈ TRẢ VỀ DUY NHẤT 1 JSON HỢP LỆ (không markdown, không văn bả
       ];
 
       return {
-        modelUsed: FIXED_MODEL_ID,
+        modelUsed: 'GlowMax Vision 3D',
         scanDateStr,
         overallScore: ovrScore,
         potentialScore,
@@ -3547,7 +3547,7 @@ CHỈ TRẢ VỀ DUY NHẤT 1 JSON HỢP LỆ (không markdown, không văn bả
 
       try {
         state.landmarks = await extractMediaPipeLandmarks(state.frontCanvas);
-        if (loadTitle) loadTitle.textContent = `Đang đo đạc 48 chỉ số giải phẫu (${FIXED_MODEL_ID})...`;
+        if (loadTitle) loadTitle.textContent = 'Đang đo đạc 48 chỉ số giải phẫu 2 góc...';
 
         const seedNum = parseInt(fpFront.slice(0, 6), 16) || 424242;
         const result = await analyzeDualFaceWithGeminiAI(state.frontCanvas, state.profileCanvas, seedNum);
@@ -3560,6 +3560,7 @@ CHỈ TRẢ VỀ DUY NHẤT 1 JSON HỢP LỆ (không markdown, không văn bả
         } catch (e) {}
 
         const frontThumb = compressCanvasForAI(state.frontCanvas, 448, 0.78);
+        const profileThumb = compressCanvasForAI(state.profileCanvas, 448, 0.78);
         const now = new Date();
         const dateFormatted = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
         state.progressHistory.unshift({
@@ -3569,6 +3570,7 @@ CHỈ TRẢ VỀ DUY NHẤT 1 JSON HỢP LỆ (không markdown, không văn bả
           potential: result.potentialScore,
           tier: result.tierCode,
           frontImg: frontThumb,
+          profileImg: profileThumb,
           resultSnapshot: result,
         });
         state.progressHistory = state.progressHistory.slice(0, 16);
@@ -3911,7 +3913,7 @@ CHỈ TRẢ VỀ DUY NHẤT 1 JSON HỢP LỆ (không markdown, không văn bả
       const bodyEl = document.getElementById('cat-detail-body');
 
       if (catId === 'overview') {
-        badgeEl.textContent = `MÁY ĐO VÔ CẢM • ${r.modelUsed}`;
+        badgeEl.textContent = 'MÁY ĐO NHÂN TRẮC VÔ CẢM • 2 GÓC';
         titleEl.textContent = `TỔNG QUAN ${r.overallScore}/100 (${r.tierCode})`;
       } else {
         const foundCat = (r.categories8 || []).find((c) => c.id === catId);
@@ -4124,7 +4126,7 @@ CHỈ TRẢ VỀ DUY NHẤT 1 JSON HỢP LỆ (không markdown, không văn bả
       const r = state.analysisResult;
       const p = r.pillars;
       const text = [
-        `✨ GLOWMAX VN — KẾT QUẢ PHÂN TÍCH 2 GÓC (${r.modelUsed})`,
+        '✨ GLOWMAX VN — KẾT QUẢ PHÂN TÍCH 2 GÓC',
         `• Tổng thể (OVR): ${r.overallScore}/100 (${r.tierCode}) | Tiềm năng: ${r.potentialScore}/100`,
         `• Chính diện: ${r.frontScore}/100 | Góc nghiêng 90°: ${r.profileScore}/100`,
         `• Appeal: ${p.appeal} | Hàm: ${p.jaw} | Mắt: ${p.eyes} | Mũi: ${p.nose} | Da mặt: ${p.skin}`,
@@ -4169,7 +4171,7 @@ CHỈ TRẢ VỀ DUY NHẤT 1 JSON HỢP LỆ (không markdown, không văn bả
 
       ctx.fillStyle = '#A1A1AA';
       ctx.font = '600 22px Inter, sans-serif';
-      ctx.fillText(`${state.username.toUpperCase()} • ${r.scanDateStr} • ${r.modelUsed}`, 72, 145);
+      ctx.fillText(`${state.username.toUpperCase()} • ${r.scanDateStr} • GLOWMAX 3D`, 72, 145);
 
       ctx.fillStyle = '#FFFFFF';
       ctx.font = '900 130px JetBrains Mono, monospace';
@@ -4296,15 +4298,24 @@ CHỈ TRẢ VỀ DUY NHẤT 1 JSON HỢP LỆ (không markdown, không văn bả
       grid.innerHTML = state.progressHistory
         .map(
           (item, idx) => `
-        <div class="glow-card rounded-3xl overflow-hidden border border-white/10 group relative">
+        <div
+          role="button"
+          tabindex="0"
+          onclick="openSavedProgressResult('${item.id}')"
+          onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); openSavedProgressResult('${item.id}'); }"
+          class="glow-card rounded-3xl overflow-hidden border border-white/10 hover:border-[#E5B954]/50 group relative cursor-pointer active:scale-[0.98] transition"
+        >
           <div class="aspect-[3/4] bg-black relative">
             <img src="${item.frontImg}" alt="Scan ${idx + 1}" class="w-full h-full object-cover" />
             <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+            <span class="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-full bg-black/70 border border-white/15 text-[9px] font-bold text-zinc-200">
+              👁️ Xem lại
+            </span>
             <button
               type="button"
-              onclick="deleteProgressItem('${item.id}')"
+              onclick="event.stopPropagation(); deleteProgressItem('${item.id}');"
               title="Xóa bản ghi"
-              class="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/70 hover:bg-rose-500/80 text-white text-xs flex items-center justify-center transition"
+              class="absolute top-2 right-2 z-10 w-7 h-7 rounded-full bg-black/75 hover:bg-rose-500/85 text-white text-xs flex items-center justify-center transition"
             >
               ✕
             </button>
@@ -4322,6 +4333,88 @@ CHỈ TRẢ VỀ DUY NHẤT 1 JSON HỢP LỆ (không markdown, không văn bả
       `
         )
         .join('');
+    }
+
+    function dataUrlToCanvas(dataUrl) {
+      return new Promise((resolve) => {
+        if (!dataUrl || typeof dataUrl !== 'string') {
+          resolve(null);
+          return;
+        }
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.naturalWidth || 448;
+          canvas.height = img.naturalHeight || 598;
+          canvas.getContext('2d').drawImage(img, 0, 0);
+          resolve(canvas);
+        };
+        img.onerror = () => resolve(null);
+        img.src = dataUrl;
+      });
+    }
+
+    async function openSavedProgressResult(id) {
+      const item = (state.progressHistory || []).find((entry) => entry && entry.id === id);
+      if (!item) {
+        showToast('Không tìm thấy dữ liệu của lần chấm này.', '⚠️');
+        return;
+      }
+
+      playTone(660, 0.07);
+      const frontCvs = await dataUrlToCanvas(item.frontImg);
+      const profileCvs = await dataUrlToCanvas(item.profileImg || item.frontImg);
+      if (frontCvs) {
+        state.frontCanvas = frontCvs;
+        state.landmarks = await extractMediaPipeLandmarks(frontCvs);
+      }
+      if (profileCvs) {
+        state.profileCanvas = profileCvs;
+      }
+
+      const ovr = clamp(Math.round(Number(item.ovr) || 50), 1, 100);
+      const tier = classifyScoreTier(ovr, state.gender);
+      const fallbackCategories = ANATOMICAL_8_CATEGORIES.map((cat) => ({
+        id: cat.id,
+        title: cat.title,
+        dateStr: item.date || '',
+        items: cat.items.map((it) => ({
+          code: it.code,
+          sub: it.sub,
+          value: it.defaultVal,
+          ref: it.ref,
+          icon: it.icon,
+        })),
+      }));
+
+      const snapshot = item.resultSnapshot && typeof item.resultSnapshot === 'object' ? { ...item.resultSnapshot } : null;
+      const restoredResult = snapshot || {
+        modelUsed: 'GlowMax Vision 3D',
+        scanDateStr: item.date || '',
+        overallScore: ovr,
+        potentialScore: clamp(Number(item.potential) || ovr + 8, ovr + 4, 98),
+        frontScore: ovr,
+        profileScore: ovr,
+        tierCode: tier.code,
+        tierLabel: tier.label,
+        tierColor: tier.color,
+        faceStyleType: ovr >= 65 ? 'Clean fit' : 'Balanced Natural',
+        pillars: { appeal: ovr, jaw: ovr, eyes: ovr, nose: ovr, skin: ovr, cheekbones: ovr, symmetry: ovr },
+        categories8: fallbackCategories,
+        detectedStrengths: [],
+        detectedFlaws: [],
+        aiVerdict: `Bản lưu kết quả ngày ${item.date}: Tổng thể ${ovr}/100 (${tier.code}).`,
+        glowUpPlan: [],
+      };
+
+      restoredResult.modelUsed = 'GlowMax Vision 3D';
+      restoredResult.tierCode = tier.code;
+      restoredResult.tierLabel = tier.label;
+      restoredResult.tierColor = tier.color;
+
+      state.analysisResult = restoredResult;
+      showOnlyView('view-results');
+      renderResults(restoredResult);
     }
 
     function deleteProgressItem(id) {
